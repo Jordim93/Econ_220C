@@ -1,0 +1,57 @@
+*Jordi Martinez Muñoz
+clear all
+set more off
+use handguns.dta
+desc
+summarize
+gen log_vio=log(vio)
+gen log_mur=log(mur)
+gen log_rob=log(rob)
+
+/************ Question I *******/
+reg log_vio shall, r
+reg log_mur shall, r
+reg log_rob shall, r
+
+/************ Question II *******/
+reg log_vio shall incarc_rate density pop pm1029 avginc, r
+reg log_mur shall incarc_rate density pop pm1029 avginc, r
+reg log_rob shall incarc_rate density pop pm1029 avginc, r
+
+/************ Question IV *******/
+tab state, gen(statedummy)
+tab year, gen(yeardummy)
+
+reg log_vio shall incarc_rate density pop pm1029 avginc, r
+reg log_vio shall incarc_rate density pop pm1029 avginc statedummy*, r 
+testparm statedummy*
+reg log_vio shall incarc_rate density pop pm1029 avginc statedummy* yeardummy*, r 
+testparm statedummy*
+testparm yeardummy*
+
+reg log_vio shall incarc_rate density pop pm1029 avginc statedummy* yeardummy*,cluster(state) r
+testparm statedummy*
+testparm yeardummy*
+
+
+reg log_mur shall incarc_rate density pop pm1029 avginc, r
+reg log_mur shall incarc_rate density pop pm1029 avginc statedummy*, r 
+testparm statedummy*
+reg log_mur shall incarc_rate density pop pm1029 avginc statedummy* yeardummy*, r 
+testparm statedummy*
+testparm yeardummy*
+
+reg log_mur shall incarc_rate density pop pm1029 avginc statedummy* yeardummy*,cluster(state) r
+testparm statedummy*
+testparm yeardummy*
+
+reg log_rob shall incarc_rate density pop pm1029 avginc, r
+reg log_rob shall incarc_rate density pop pm1029 avginc statedummy*, r 
+testparm statedummy*
+reg log_rob shall incarc_rate density pop pm1029 avginc statedummy* yeardummy*, r 
+testparm statedummy*
+testparm yeardummy*
+
+reg log_rob shall incarc_rate density pop pm1029 avginc statedummy* yeardummy*,cluster(state) r
+testparm statedummy*
+testparm yeardummy*
