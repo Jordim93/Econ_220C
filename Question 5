@@ -1,0 +1,145 @@
+% Jordi Martinez Muñoz
+%% -----------------------------
+% Question a
+%-------------------------------
+clear;
+clc;
+N = 500;
+T = 5;
+nreplic = 1000;
+
+beta_h = zeros(nreplic,1);
+
+
+rng(20210418);
+for replic = 1:1:nreplic;
+    
+    x = randn(T,N);
+    e = abs(x).*randn(T,N);
+    y = x + e;
+    
+    
+    y = y - repmat(mean(y),T,1);
+    x = x - repmat(mean(x),T,1);
+
+    yy = y';  % Transpose y
+    xx = x';  % Transpose x 
+    
+    % If we compute x'x, the i-th diagonal term contains the product
+    % x_i'*x_i, that is x'x for individual i. Then summing the diagonal
+    % terms gives sum_{i=1}^{N}x_i'x_i. Similar for x'y. 
+    %Then b= (sum_{i=1}^{N}x_i'x_i)^-1/(sum_{i=1}^{N}x_i'y_i) is the same
+    %as: 
+   
+    beta_h(replic)=sum(diag(xx*x))\sum(diag(xx*y)); 
+    e_hat = y - x*beta_h(replic);
+    
+    
+    e_hat_demeaned=e_hat-repmat(mean(e_hat),T,1); %demeaned residuals 
+    sigma_hat(replic)=sqrt((sum(x(:).^2))^(-2)*sum(sum(x.*e_hat_demeaned).^2));
+     sigma_tilde(replic)=sqrt((sum(x(:).^2))^(-2)*sum(sum((x.^2).*(e_hat_demeaned.^2))));
+  
+    %note sum(x(:)).^2 is Sxx, the sum of the squared of every demeaned
+    %element of x
+     
+end
+
+%% -----------------------------
+% Question b,c
+%-------------------------------
+  bias_hat=mean(sigma_hat)-std(beta_h);
+  bias_tilde=mean(sigma_tilde)-std(beta_h); 
+  
+  [std(beta_h) bias_hat bias_tilde std(sigma_hat) std(sigma_tilde) ...
+    sqrt(var(sigma_hat)+bias_hat^2) sqrt(var(sigma_tilde)+bias_tilde^2) ] 
+
+%% -----------------------------
+% Question d, T=10 
+%-------------------------------
+clear;
+clc;
+N = 500;
+T = 10;
+nreplic = 1000;
+
+beta_h = zeros(nreplic,1);
+sigma_beta1 =  zeros(nreplic,1);
+sigma_beta2 =  zeros(nreplic,1);
+
+rng(20210418);
+for replic = 1:1:nreplic;
+    
+    x = randn(T,N);
+    %sigma = repmat(sqrt(T)*mean(x),T,1)
+    e = abs(x).*randn(T,N);
+    y = x + e;
+    
+    
+    y = y - repmat(mean(y),T,1);
+    x = x - repmat(mean(x),T,1);
+
+    yy = y';  % T x N
+    xx = x';  % T x N
+   
+    beta_h(replic)=sum(diag(xx*x))\sum(diag(xx*y)); 
+    e_hat = y - x*beta_h(replic);
+    
+    
+    e_hat_demeaned=e_hat-repmat(mean(e_hat),T,1); 
+    sigma_hat(replic)=sqrt((sum(x(:).^2))^(-2)*sum(sum(x.*e_hat_demeaned).^2));
+    sigma_tilde(replic)=sqrt((sum(x(:).^2))^(-2)*sum(sum((x.^2).*(e_hat_demeaned.^2))));
+  
+    
+end
+
+  bias_hat=mean(sigma_hat)-std(beta_h);
+  bias_tilde=mean(sigma_tilde)-std(beta_h); 
+  
+  [std(beta_h) bias_hat bias_tilde std(sigma_hat) std(sigma_tilde) ...
+    sqrt(var(sigma_hat)+bias_hat^2) sqrt(var(sigma_tilde)+bias_tilde^2) ] 
+
+%% -----------------------------
+% Question d, T=20 
+%-------------------------------
+clear;
+clc;
+N = 500;
+T = 20;
+nreplic = 1000;
+
+beta_h = zeros(nreplic,1);
+sigma_beta1 =  zeros(nreplic,1);
+sigma_beta2 =  zeros(nreplic,1);
+
+rng(20210418);
+for replic = 1:1:nreplic;
+    
+    x = randn(T,N);
+    %sigma = repmat(sqrt(T)*mean(x),T,1)
+    e = abs(x).*randn(T,N);
+    y = x + e;
+    
+    
+    y = y - repmat(mean(y),T,1);
+    x = x - repmat(mean(x),T,1);
+
+    yy = y';  % T x N
+    xx = x';  % T x N
+   
+    beta_h(replic)=sum(diag(xx*x))\sum(diag(xx*y)); 
+    e_hat = y - x*beta_h(replic);
+    
+    
+    e_hat_demeaned=e_hat-repmat(mean(e_hat),T,1); 
+    sigma_hat(replic)=sqrt((sum(x(:).^2))^(-2)*sum(sum(x.*e_hat_demeaned).^2));
+    sigma_tilde(replic)=sqrt((sum(x(:).^2))^(-2)*sum(sum((x.^2).*(e_hat_demeaned.^2))));
+  
+    
+end
+
+  bias_hat=mean(sigma_hat)-std(beta_h);
+  bias_tilde=mean(sigma_tilde)-std(beta_h); 
+  
+  [std(beta_h) bias_hat bias_tilde std(sigma_hat) std(sigma_tilde) ...
+    sqrt(var(sigma_hat)+bias_hat^2) sqrt(var(sigma_tilde)+bias_tilde^2) ] 
+
