@@ -1,0 +1,89 @@
+*******************************************************
+***Adaptation from the sample dofile from the course Econ 220C UCSD Spring 2021***
+*******************************************************
+drop _all
+set more off
+
+
+capture log close
+log using ps2.log, replace
+
+import excel "C:\Users\USUARIO\Downloads\cigar.xls", sheet("cigar_new") firstrow
+
+
+rename State state
+rename Year year
+rename logconsumption lnc
+rename lnprice lnp
+rename logincome lny
+rename logminimumpriceatneighboring lnpn
+
+sort state year
+tsset state year
+
+**************************************************************
+*      Part (a)                                              *
+* Stata adjustments for the degree of freedom Automatically  *
+**************************************************************
+reg lnc L1.lnc lnp lny lnpn, r
+
+
+**************************************************************
+*      Part (b)                                              *
+**************************************************************
+quiet tabulate year, generate (yeard)  
+                              /*generate the year dummies */
+
+reg lnc L1.lnc lnp lny lnpn yeard3-yeard30, r
+
+***************** or use the following ****************
+ xi: reg lnc L1.lnc lnp lny lnpn i.year,r
+
+**************************************************************
+*      Part (c)                                              *
+**************************************************************
+by state: gen lnc1=lnc[_n-1]
+xtreg lnc lnc1 lnp lny lnpn, fe
+
+**************************************************************
+*      Part (d)                                              *
+**************************************************************
+
+xtreg lnc lnc1 lnp lny lnpn yeard3-yeard30, fe 
+testparm yeard*
+
+*---------------- or use the following -------------
+xi: xtreg lnc lnc1 lnp lny lnpn i.year, fe
+testparm _Iyear* 
+*---------------------------------------------------
+
+
+**************************************************************
+*      Part (e)                                              *
+**************************************************************
+
+gen Dlnc=D.lnc
+ivreg D.lnc (L1.Dlnc = L2.lnc) D.lnp D.lny D.lnpn  yeard3-yeard30
+
+
+
+**************************************************************
+*      Part (g)                                              *
+**************************************************************
+
+*******g.i **********
+xtabond lnc lnp lny lnpn yeard2-yeard30, lags(1)
+*or
+ xi: xtabond lnc lnp lny lnpn i.year, lags(1)
+
+*******g.ii **********
+xtabond lnc lnp lny lnpn yeard2-yeard30, lags(1) maxldep(3)
+* or
+xi: xtabond lnc lnp lny lnpn i.year, lags(1) maxldep(3)
+
+
+*******g.iii **********
+xtabond lnc lnp lny lnpn yeard2-yeard30, lags(1) maxldep(1)
+*or 
+xi: xtabond lnc lnp lny lnpn i.year, lags(1) maxldep(1)
+
